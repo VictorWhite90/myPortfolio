@@ -7,6 +7,7 @@ import advance from './assets/advance.png';
 import prestineApart from "./assets/delux-outsideview.jpg";
 import connectsSphere from './assets/Screenshot (63).png';
 import shopHub from './assets/Screenshot (61).png';
+import pleasantBrainsThumb from './assets/pleasant-brains.png';
 
 const Portfolio = () => {
   const [darkMode, setDarkMode] = useState(true);
@@ -85,6 +86,8 @@ const Portfolio = () => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('animate-in');
+        } else {
+          entry.target.classList.remove('animate-in');
         }
       });
     }, observerOptions);
@@ -169,6 +172,15 @@ const Portfolio = () => {
       stack: ['React', 'Tailwind CSS', 'REST API', 'Zustand'],
       liveUrl: 'https://rccgyp9-advance.vercel.app/',
       githubUrl: 'https://github.com/VictorWhite90/rccgyp9-advance'
+    },
+    {
+      title: 'Brains&Hammers Estate clone website',
+      description: 'A clone of the Brains & Hammers website showcasing property listings and completed projects by Pleasant-Brains across Abuja, Lagos, and Kano. Features a cinematic, user-friendly interface for an immersive real estate browsing experience.',
+      image: pleasantBrainsThumb,
+      videoSrc: '/videos/brains-and-hammers-banner.mp4',
+      stack: ['HTML5', 'CSS Animations', 'JavaScript'],
+      liveUrl: 'https://plesant-brains.vercel.app/',
+      githubUrl: 'https://github.com/VictorWhite90/plesant-brains'
     }
   ];
 
@@ -371,6 +383,76 @@ const Portfolio = () => {
         .project-card {
           position: relative;
           overflow: hidden;
+          isolation: isolate;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .project-card::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 24px;
+          background: radial-gradient(circle at top, rgba(6, 182, 212, 0.25), transparent 55%);
+          opacity: 0;
+          transition: opacity 0.4s ease;
+          z-index: -1;
+        }
+
+        .project-card.animate-in::before {
+          opacity: 1;
+        }
+
+        .project-card::after {
+          content: '';
+          position: absolute;
+          inset: 1px;
+          border-radius: 22px;
+          border: 1px solid rgba(255, 255, 255, 0.04);
+          pointer-events: none;
+        }
+
+        .project-number {
+          position: absolute;
+          top: 16px;
+          left: 16px;
+          padding: 0.35rem 0.85rem;
+          border-radius: 999px;
+          background: rgba(15, 23, 42, 0.65);
+          color: #e0f2fe;
+          font-size: 0.75rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          backdrop-filter: blur(12px);
+        }
+
+        .project-meta-chip {
+          padding: 0.4rem 0.9rem;
+          border-radius: 999px;
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.2em;
+          background: rgba(6, 182, 212, 0.18);
+          color: #0891b2;
+          border: 1px solid rgba(6, 182, 212, 0.25);
+        }
+
+        .project-media-wrap {
+          position: relative;
+          border-radius: 0;
+          overflow: hidden;
+        }
+
+        .project-media-wrap::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(15, 23, 42, 0) 40%, rgba(15, 23, 42, 0.9) 100%);
+          opacity: 0;
+          transition: opacity 0.4s ease;
+        }
+
+        .project-card:hover .project-media-wrap::after {
+          opacity: 1;
         }
 
         .project-overlay {
@@ -388,6 +470,23 @@ const Portfolio = () => {
           align-items: center;
           gap: 1rem;
           padding: 2rem;
+        }
+
+        .project-card.animate-on-scroll {
+          opacity: 0;
+          transform: translateY(40px) scale(0.96);
+        }
+
+        .project-card.animate-on-scroll.animate-in {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .projects-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 2rem;
         }
 
         .project-card:hover .project-overlay {
@@ -676,24 +775,37 @@ const Portfolio = () => {
             <p className="text-center text-gray-600 dark:text-gray-400 mb-12 animate-on-scroll">
               A showcase of my recent work and creative solutions
             </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="projects-grid">
               {projects.map((project, index) => (
                 <article
                   key={index}
-                  className="project-card bg-gray-50 dark:bg-gray-900 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 animate-on-scroll group"
+                  className="project-card bg-white/80 dark:bg-gray-900/70 rounded-3xl overflow-hidden shadow-xl transition-all duration-500 animate-on-scroll group"
                 >
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={project.image}
-                      alt={`${project.title} screenshot`}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      loading="lazy"
-                    />
+                  <div className="project-number">Project {String(index + 1).padStart(2, '0')}</div>
+                  <div className="project-media-wrap h-72">
+                    {project.videoSrc ? (
+                      <video
+                        className="h-full w-full object-cover"
+                        src={project.videoSrc}
+                        poster={project.image}
+                        muted
+                        loop
+                        playsInline
+                        autoPlay
+                      />
+                    ) : (
+                      <img
+                        src={project.image}
+                        alt={`${project.title} screenshot`}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    )}
                     <div className="project-overlay">
                       <h3 className="text-xl font-bold text-white text-center">
                         {project.title}
                       </h3>
-                      <div className="flex gap-4">
+                      <div className="flex flex-wrap justify-center gap-4">
                         <a
                           href={project.liveUrl}
                           target="_blank"
@@ -717,18 +829,21 @@ const Portfolio = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                        {project.title}
+                      </h3>
+                      <span className="project-meta-chip">Case Study</span>
+                    </div>
+                    <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                       {project.description}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {project.stack.map((tech, i) => (
                         <span
                           key={i}
-                          className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300 rounded-full font-medium border border-cyan-200 dark:border-cyan-800"
+                          className="px-3 py-1 text-xs sm:text-sm bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-200 rounded-full font-medium border border-cyan-100 dark:border-cyan-800"
                         >
                           {tech}
                         </span>
