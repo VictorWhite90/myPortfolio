@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ExternalLink, Github } from 'lucide-react';
+import { ExternalLink, Github, ArrowUpRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ProjectCard = ({ project, index, featured = false }) => {
@@ -49,19 +49,21 @@ const ProjectCard = ({ project, index, featured = false }) => {
           />
         )}
 
+        {/* Arrow Icon for View Live - Top Right */}
+        <motion.a
+          href={project.liveUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute top-3 right-3 z-10 p-2 bg-accent/90 backdrop-blur-md hover:bg-accent text-white rounded-full shadow-lg flex items-center justify-center transition-all"
+          whileHover={{ scale: 1.1, rotate: 45 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <ArrowUpRight size={20} />
+        </motion.a>
+
         {/* Glassmorphism Overlay on Hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
-          <motion.a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-3 bg-accent/90 backdrop-blur-md hover:bg-accent text-white rounded-fluent font-semibold flex items-center gap-2 shadow-neon"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ExternalLink size={18} />
-            View Live
-          </motion.a>
           <motion.a
             href={project.githubUrl}
             target="_blank"
@@ -69,6 +71,7 @@ const ProjectCard = ({ project, index, featured = false }) => {
             className="px-6 py-3 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white rounded-fluent font-semibold flex items-center gap-2"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
+            onClick={(e) => e.stopPropagation()}
           >
             <Github size={18} />
             Code

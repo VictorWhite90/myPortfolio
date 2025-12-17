@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MapPin, Phone, Loader } from 'lucide-react';
+import { Mail, MapPin, Phone, Loader, Linkedin, Github } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import HeroSection from './HeroSection';
 import Sidebar from './Sidebar';
@@ -21,6 +21,14 @@ const HomePage = ({ projects, skills, experiences }) => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+
+  // Debug: Check if projects are passed correctly
+  useEffect(() => {
+    console.log('HomePage mounted with projects:', projects);
+    console.log('Projects count:', projects?.length);
+    console.log('Skills count:', skills?.length);
+    console.log('Experiences count:', experiences?.length);
+  }, [projects, skills, experiences]);
 
   useEffect(() => {
     emailjs.init(EMAILJS_PUBLIC_KEY);
@@ -146,7 +154,7 @@ const HomePage = ({ projects, skills, experiences }) => {
         <div id="home">
           <HeroSection
             onNavigate={scrollToSection}
-            featuredProject={projects[0]}
+            featuredProject={projects && projects.length > 0 ? projects[0] : null}
           />
         </div>
 
@@ -167,9 +175,15 @@ const HomePage = ({ projects, skills, experiences }) => {
 
           {/* All Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} index={index} />
-            ))}
+            {projects && projects.length > 0 ? (
+              projects.map((project, index) => (
+                <ProjectCard key={index} project={project} index={index} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-400">No projects available</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -184,14 +198,61 @@ const HomePage = ({ projects, skills, experiences }) => {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 font-segoe">About Me</h2>
             <div className="space-y-4 sm:space-y-6 text-sm sm:text-base lg:text-lg text-gray-300 leading-relaxed">
               <p>
-                I'm a passionate <span className="text-accent font-semibold">Frontend Developer</span> dedicated to building engaging, responsive, and user-focused web experiences. I love bringing ideas to life through clean code and thoughtful design.
+                I'm a passionate <span className="text-accent font-semibold">Frontend Developer</span> with 3+ years of experience delivering responsive, accessible web applications across real estate, e-commerce, and community platforms. I've built and shipped 10+ production-ready experiences with a focus on performance, data-informed UX decisions, and maintainable component libraries.
               </p>
               <p>
-                I specialize in <span className="text-accent font-semibold">JavaScript, React, and Tailwind CSS</span>, crafting modern, performant interfaces that balance aesthetics and functionality. My focus is on creating seamless digital experiences that look great and work flawlessly across all devices.
+                I specialize in <span className="text-accent font-semibold">JavaScript (ES6+), React.js, TypeScript, HTML5, CSS3</span>, and modern styling frameworks like <span className="text-accent font-semibold">Tailwind CSS and Bootstrap</span>. I'm adept at collaborating with cross-functional teams, translating business goals into scalable technical solutions, and optimizing products through analytics and experimentation.
               </p>
               <p>
-                I'm constantly exploring new tools and technologies to enhance my workflow and stay ahead in the ever-evolving web ecosystem. Every project I build is an opportunity to deliver intuitive design, efficient performance, and lasting user impact.
+                My technical expertise extends to state management with <span className="text-accent font-semibold">Redux, Zustand, and React Query</span>, backend integration with <span className="text-accent font-semibold">Firebase, Supabase, and REST APIs</span>, and tools like <span className="text-accent font-semibold">Git/GitHub, Vite, EmailJS, and Vercel</span>. I'm also skilled in data analysis with SQL, Excel, Tableau, and Power BI.
               </p>
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">Education & Certifications</h3>
+                <div className="space-y-3">
+                  <p>
+                    <span className="text-accent font-semibold">Bachelor of Technology, Mechanical Engineering</span> – Rivers State University, 2022<br />
+                    <span className="text-gray-400 text-sm">Relevant Coursework: Engineering Mathematics, Computer Programming, Data Analysis, Problem Solving</span>
+                  </p>
+                  <p>
+                    <span className="text-accent font-semibold">National Youth Service Corps (NYSC)</span> – Certificate of National Service, 2024
+                  </p>
+                  <p>
+                    <span className="text-accent font-semibold">Google Data Analytics Professional Certificate</span> – Coursera, 2025
+                  </p>
+                  <p>
+                    <span className="text-accent font-semibold">Full Stack Frontend Web Development</span> – New Horizons, 2024
+                  </p>
+                  <p>
+                    <span className="text-accent font-semibold">Web Development</span> – freeCodeCamp & Bro Code, 2023–2024
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">Professional Experience</h3>
+                <div className="space-y-4">
+                  <p>
+                    Currently serving as <span className="text-accent font-semibold">Frontend Developer</span> at <span className="text-accent font-semibold">Clobec</span> (Jan 2025 – Present), developing modern apartment booking experiences in React + TypeScript with scalability-focused atomic design systems. I've achieved 80% component reuse by building shared UI kits and formalized Git branching standards.
+                  </p>
+                  <p>
+                    As <span className="text-accent font-semibold">Frontend Developer at Pleasant Places</span> (Nov 2024 – Present), I architected and launched a responsive booking platform from scratch, reducing form abandonment by 40% and optimizing load performance by 60% (3.2s → 1.3s).
+                  </p>
+                  <p>
+                    Previously at <span className="text-accent font-semibold">RCCG Youth Program</span> (Jun 2024 – Dec 2024), I co-built a production-grade React platform serving 1,000+ active registrants, integrated authentication and payments via REST APIs, and reduced unnecessary re-renders by 45% using React optimizations.
+                  </p>
+                  <p>
+                    I also served as <span className="text-accent font-semibold">ICT Instructor at Joscal Group of Schools</span> (Sep 2024 – Dec 2024), delivering web fundamentals to 50+ students and mentoring learners through 20+ portfolio builds.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">Achievements & Impact</h3>
+                <ul className="list-disc list-inside space-y-2 text-gray-300">
+                  <li>Delivered 10+ production-ready web apps with 99.9% uptime and zero critical production bugs</li>
+                  <li>Improved average page load speeds by 55% across engagements through systematic performance optimization</li>
+                  <li>Consistently achieved 90+ Lighthouse scores for performance, accessibility, best practices, and SEO</li>
+                  <li>Contributed to open-source efforts and maintain 15+ active repositories showcasing experimentation and learning</li>
+                </ul>
+              </div>
             </div>
           </motion.div>
         </section>
@@ -272,6 +333,8 @@ const HomePage = ({ projects, skills, experiences }) => {
                 { icon: Mail, label: 'Email', value: 'victorwhite590@gmail.com', href: 'mailto:victorwhite590@gmail.com' },
                 { icon: MapPin, label: 'Location', value: 'Abuja, Nigeria', href: null },
                 { icon: Phone, label: 'Phone', value: '+234 906 624 8405', href: 'tel:+2349066248405' },
+                { icon: Github, label: 'GitHub', value: 'github.com/VictorWhite90', href: 'https://github.com/VictorWhite90', target: '_blank' },
+                { icon: Linkedin, label: 'LinkedIn', value: 'linkedin.com/in/victorchinedu97', href: 'https://www.linkedin.com/in/victorchinedu97', target: '_blank' },
               ].map((item, index) => {
                 const Icon = item.icon;
                 return (
@@ -290,7 +353,12 @@ const HomePage = ({ projects, skills, experiences }) => {
                     <div className="min-w-0">
                       <div className="text-xs sm:text-sm text-gray-400 mb-1">{item.label}</div>
                       {item.href ? (
-                        <a href={item.href} className="text-white font-semibold text-sm sm:text-base lg:text-lg hover:text-accent transition-colors break-words">
+                        <a 
+                          href={item.href} 
+                          target={item.target || '_self'}
+                          rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
+                          className="text-white font-semibold text-sm sm:text-base lg:text-lg hover:text-accent transition-colors break-words"
+                        >
                           {item.value}
                         </a>
                       ) : (

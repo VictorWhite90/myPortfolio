@@ -1,6 +1,8 @@
-import { Routes, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import ProjectDetail from './components/ProjectDetail';
+import WelcomePage from './components/WelcomePage';
 import prestineApart from './assets/delux-outsideview.jpg';
 import connectsSphere from './assets/Screenshot (63).png';
 import veltora from './assets/veltora.png';
@@ -9,6 +11,35 @@ import propertyImage from './assets/wstNY1.png';
 import advance from './assets/advance.png';
 
 function App() {
+  const location = useLocation();
+  const [welcomeComplete, setWelcomeComplete] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  useEffect(() => {
+    // Check if this is a fresh page load (not navigation within app)
+    const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcome');
+
+    console.log('App mounted/route changed:', location.pathname);
+    console.log('hasSeenWelcome:', hasSeenWelcome);
+
+    // Only show welcome page on root path "/" and if user hasn't seen it in this session
+    if (location.pathname === '/' && !hasSeenWelcome) {
+      console.log('Showing welcome page');
+      setShowWelcome(true);
+      setWelcomeComplete(false);
+    } else {
+      console.log('Skipping welcome page');
+      setShowWelcome(false);
+      setWelcomeComplete(true);
+    }
+  }, [location.pathname]);
+
+  const handleWelcomeComplete = () => {
+    console.log('Welcome completed, setting session storage');
+    sessionStorage.setItem('hasSeenWelcome', 'true');
+    setWelcomeComplete(true);
+    setShowWelcome(false);
+  };
 
   const projects = [
     {
@@ -64,6 +95,24 @@ function App() {
         'State management with Zustand'
       ],
       date: 'November 2024'
+    },
+    {
+      title: 'Atelier Eira Restaurant Landing',
+      description: 'An immersive restaurant marketing page featuring scroll-triggered storytelling, elegant menu highlights, and Firebase-powered reservation system. Built with React and Tailwind CSS, this platform combines GSAP animations with modern design principles to create a cinematic dining experience. Features unique seat ID generation with Firebase, preventing duplicate bookings, smooth scroll animations, interactive menu sections, and optimized performance for seamless user engagement. Designed to increase lead conversions through strategic UX experimentation and compelling visual narratives.',
+      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop',
+      stack: ['React', 'Vite', 'Tailwind CSS', 'Firebase', 'GSAP', 'PostCSS', 'JavaScript', 'ESLint'],
+      liveUrl: 'https://atelier-eira-resturant-landing-page.vercel.app/',
+      githubUrl: 'https://github.com/VictorWhite90/atelier-eira-resturant-landing-page',
+      features: [
+        'Firebase-powered seat reservation with unique IDs',
+        'Prevents duplicate seat bookings',
+        'Scroll-triggered storytelling animations',
+        'Interactive menu highlights',
+        'GSAP-powered smooth animations',
+        'Responsive design for all devices',
+        'Optimized performance and UX'
+      ],
+      date: 'October 2024'
     },
     {
       title: 'ShopHub',
@@ -142,6 +191,7 @@ function App() {
     { name: 'Tailwind CSS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg', proficiency: 92 },
     { name: 'Redux', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redux/redux-original.svg', proficiency: 80 },
     { name: 'Firebase', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg', proficiency: 87 },
+    { name: 'Supabase', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg', proficiency: 85 },
     { name: 'Git', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg', proficiency: 85 },
     { name: 'GitHub', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg', proficiency: 90 },
     { name: 'Vite', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg', proficiency: 88 },
@@ -170,11 +220,23 @@ function App() {
     }
   ];
 
+  // Debug: Log projects data
+  useEffect(() => {
+    console.log('App - Projects count:', projects.length);
+    console.log('App - Welcome complete:', welcomeComplete);
+    console.log('App - Show welcome:', showWelcome);
+  }, [projects, welcomeComplete, showWelcome]);
+
   return (
-    <Routes>
-      <Route path="/" element={<HomePage projects={projects} skills={skills} experiences={experiences} />} />
-      <Route path="/project/:projectId" element={<ProjectDetail projects={projects} />} />
-    </Routes>
+    <>
+      {showWelcome && <WelcomePage onComplete={handleWelcomeComplete} />}
+      {welcomeComplete && (
+        <Routes>
+          <Route path="/" element={<HomePage projects={projects} skills={skills} experiences={experiences} />} />
+          <Route path="/project/:projectId" element={<ProjectDetail projects={projects} />} />
+        </Routes>
+      )}
+    </>
   );
 }
 
