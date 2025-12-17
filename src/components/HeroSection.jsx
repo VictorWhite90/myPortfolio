@@ -3,6 +3,7 @@ import { Download, ArrowRight, Sparkles } from 'lucide-react';
 import FloatingTechIcons from './FloatingTechIcons';
 import ProjectCard from './ProjectCard';
 import StatsCounter from './StatsCounter';
+import profileImage from '../assets/profile.png';
 
 const HeroSection = ({ onNavigate, featuredProject }) => {
   return (
@@ -54,7 +55,7 @@ const HeroSection = ({ onNavigate, featuredProject }) => {
                   }}
                 />
                 <img
-                  src="/src/assets/profile.png"
+                  src={profileImage}
                   alt="Victor Chinedu"
                   className="relative w-full h-full rounded-full object-cover border-4 border-accent/50 shadow-neon"
                 />

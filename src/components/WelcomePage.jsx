@@ -7,6 +7,7 @@ const WelcomePage = ({ onComplete }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [showContent, setShowContent] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showStartButton, setShowStartButton] = useState(true);
   const hasStartedRef = useRef(false);
 
   const welcomeText = "Hello! Welcome to Victor's portfolio. I'm Victor's AI assistant, and I'm here to help you explore his work. Feel free to ask me anything about Victor's background, expertise, or projects.";
@@ -86,8 +87,16 @@ const WelcomePage = ({ onComplete }) => {
 
       utterance.onerror = (event) => {
         console.error('❌ Speech error:', event.error);
-        // If speech fails, just continue after a delay
-        setTimeout(handleComplete, 2000);
+        // If blocked by browser, show button
+        if (event.error === 'not-allowed' || event.error === 'not-supported') {
+          console.log('🔒 Browser blocked auto-play, showing button');
+          setShowStartButton(true);
+          setIsSpeaking(false);
+          hasStartedRef.current = false;
+        } else {
+          // Other errors, just continue
+          setTimeout(handleComplete, 2000);
+        }
       };
 
       // SPEAK!
@@ -108,6 +117,22 @@ const WelcomePage = ({ onComplete }) => {
     }
   };
 
+  const handleStartClick = () => {
+    console.log('User clicked start button');
+    setShowStartButton(false);
+    // Trigger speech after user interaction
+    if (window.speechSynthesis) {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length === 0) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          setTimeout(speakWelcome, 100);
+        };
+      } else {
+        setTimeout(speakWelcome, 100);
+      }
+    }
+  };
+
   useEffect(() => {
     console.log('🎬 WelcomePage mounted');
     hasStartedRef.current = false;
@@ -117,18 +142,21 @@ const WelcomePage = ({ onComplete }) => {
       window.speechSynthesis.cancel();
     }
 
-    // Load voices and start speaking
+    // Try auto-start, if browser blocks it, button will remain visible
     const initSpeech = () => {
       if (window.speechSynthesis) {
         const voices = window.speechSynthesis.getVoices();
 
         if (voices.length > 0) {
-          console.log('✅ Voices loaded, starting speech');
+          console.log('✅ Voices loaded, attempting auto-start');
+          // Hide button and try to speak
+          setShowStartButton(false);
           setTimeout(speakWelcome, 500);
         } else {
           console.log('⏳ Waiting for voices...');
           window.speechSynthesis.onvoiceschanged = () => {
             console.log('✅ Voices changed event');
+            setShowStartButton(false);
             setTimeout(speakWelcome, 500);
           };
         }
@@ -254,8 +282,23 @@ const WelcomePage = ({ onComplete }) => {
                 animate={{ opacity: isSpeaking ? [0.5, 1, 0.5] : 0.7 }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                {isSpeaking ? "I'm speaking... Please listen" : "Initializing..."}
+                {isSpeaking ? "I'm speaking... Please listen" : "Ready to welcome you!"}
               </motion.p>
+
+              {/* Start Button - Only shows if browser blocks auto-play */}
+              {showStartButton && !isSpeaking && (
+                <motion.button
+                  onClick={handleStartClick}
+                  className="px-8 py-4 bg-gradient-to-r from-purple-500 via-purple-600 to-cyan-500 text-white rounded-full font-bold text-lg shadow-neon hover:shadow-neon-strong transition-all"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ delay: 1 }}
+                >
+                  🎤 Click to Hear Welcome
+                </motion.button>
+              )}
 
               {/* Sound wave visualization */}
               {isSpeaking && (
@@ -282,14 +325,14 @@ const WelcomePage = ({ onComplete }) => {
                 </motion.div>
               )}
 
-              {!isSpeaking && (
+              {!isSpeaking && !showStartButton && (
                 <motion.p
                   className="text-sm text-gray-500"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: [0, 0.5, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  Voice welcome loading...
+                  Preparing voice...
                 </motion.p>
               )}
             </motion.div>

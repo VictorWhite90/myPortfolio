@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import ProjectDetail from './components/ProjectDetail';
-import WelcomePage from './components/WelcomePage';
 import prestineApart from './assets/delux-outsideview.jpg';
 import connectsSphere from './assets/Screenshot (63).png';
 import veltora from './assets/veltora.png';
@@ -11,35 +10,6 @@ import propertyImage from './assets/wstNY1.png';
 import advance from './assets/advance.png';
 
 function App() {
-  const location = useLocation();
-  const [welcomeComplete, setWelcomeComplete] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(false);
-
-  useEffect(() => {
-    // Check if this is a fresh page load (not navigation within app)
-    const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcome');
-
-    console.log('App mounted/route changed:', location.pathname);
-    console.log('hasSeenWelcome:', hasSeenWelcome);
-
-    // Only show welcome page on root path "/" and if user hasn't seen it in this session
-    if (location.pathname === '/' && !hasSeenWelcome) {
-      console.log('Showing welcome page');
-      setShowWelcome(true);
-      setWelcomeComplete(false);
-    } else {
-      console.log('Skipping welcome page');
-      setShowWelcome(false);
-      setWelcomeComplete(true);
-    }
-  }, [location.pathname]);
-
-  const handleWelcomeComplete = () => {
-    console.log('Welcome completed, setting session storage');
-    sessionStorage.setItem('hasSeenWelcome', 'true');
-    setWelcomeComplete(true);
-    setShowWelcome(false);
-  };
 
   const projects = [
     {
@@ -223,20 +193,13 @@ function App() {
   // Debug: Log projects data
   useEffect(() => {
     console.log('App - Projects count:', projects.length);
-    console.log('App - Welcome complete:', welcomeComplete);
-    console.log('App - Show welcome:', showWelcome);
-  }, [projects, welcomeComplete, showWelcome]);
+  }, [projects]);
 
   return (
-    <>
-      {showWelcome && <WelcomePage onComplete={handleWelcomeComplete} />}
-      {welcomeComplete && (
-        <Routes>
-          <Route path="/" element={<HomePage projects={projects} skills={skills} experiences={experiences} />} />
-          <Route path="/project/:projectId" element={<ProjectDetail projects={projects} />} />
-        </Routes>
-      )}
-    </>
+    <Routes>
+      <Route path="/" element={<HomePage projects={projects} skills={skills} experiences={experiences} />} />
+      <Route path="/project/:projectId" element={<ProjectDetail projects={projects} />} />
+    </Routes>
   );
 }
 
